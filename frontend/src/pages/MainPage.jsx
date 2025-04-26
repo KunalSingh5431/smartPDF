@@ -129,7 +129,7 @@ export default function MainPage() {
       const { url, name } = uploadResponse.data;
 
       const metadata = { name, url };
-      await axios.post(`${API_BASE_URL}/upload`, metadata, {
+      await axios.post(`/api/documents/upload`, metadata, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
