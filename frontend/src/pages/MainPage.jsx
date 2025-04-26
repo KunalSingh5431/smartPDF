@@ -53,7 +53,7 @@ export default function MainPage() {
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
-  const API_BASE_URL = "http://localhost:5000/api/documents";
+  /*const API_BASE_URL = "http://localhost:5000/api/documents";*/
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
@@ -68,7 +68,7 @@ export default function MainPage() {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_BASE_URL}/doc`, {
+      const response = await axios.get(`/api/documents/doc`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,7 +116,7 @@ export default function MainPage() {
       formData.append("pdf", selectedFile);
 
       const uploadResponse = await axios.post(
-        `${API_BASE_URL}/upload-file`,
+        `/api/documents/upload-file`,
         formData,
         {
           headers: {
@@ -151,7 +151,7 @@ export default function MainPage() {
   
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${API_BASE_URL}/delete/${id}`, {
+      await axios.delete(`/api/documents/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
