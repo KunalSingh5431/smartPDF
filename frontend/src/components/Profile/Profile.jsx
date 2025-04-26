@@ -29,7 +29,7 @@ export default function Profile() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastSeverity, setToastSeverity] = useState("success");
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_BASE_URL =  "http://localhost:5000";
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");

@@ -53,7 +53,7 @@ export default function MainPage() {
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/documents";
+  const API_BASE_URL = "http://localhost:5000/api/documents";
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
