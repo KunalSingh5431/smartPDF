@@ -269,7 +269,7 @@ export default function MainPage() {
         </AppBar>
 
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
-          {filteredDocs.map((doc) => (
+          {Array.isArray(filteredDocs) && filteredDocs.map((doc) => (
             <Grid item xs={12} sm={6} md={4} key={doc._id}>
               <Card>
                 <CardContent>
