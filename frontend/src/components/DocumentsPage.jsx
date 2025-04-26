@@ -40,13 +40,13 @@ export default function DocumentsPage() {
   const [speakingId, setSpeakingId]   = useState(null);   
 
   const navigate     = useNavigate();
-  const API_BASE_URL = "http://localhost:5000/api/documents";
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => { fetchDocs(); }, []);
   const fetchDocs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get(`${API_BASE_URL}/doc`, {
+      const { data } = await axios.get(`${API_BASE_URL}/api/documents/doc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocuments(data);
@@ -59,7 +59,7 @@ export default function DocumentsPage() {
     if (!window.confirm("Delete this PDF?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${API_BASE_URL}/delete/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/documents/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setToastMessage("Deleted");
@@ -76,7 +76,7 @@ export default function DocumentsPage() {
       setSummaryText("Generating summary…");
       setSummaryOpen(true);
       const token = localStorage.getItem("token");
-      const { data } = await axios.get(`${API_BASE_URL}/summary/${id}`, {
+      const { data } = await axios.get(`${API_BASE_URL}/api/documents/summary/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSummaryText(data.summary);
