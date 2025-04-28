@@ -23,35 +23,43 @@ import {
   Delete,
   ViewModule,
   ViewList,
-  VolumeUp,  
+  VolumeUp,
 } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function DocumentsPage() {
-  const [documents, setDocuments]   = useState([]);
-  const [viewMode,  setViewMode]    = useState("grid");
-  const [toastOpen, setToastOpen]   = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [viewMode, setViewMode] = useState("grid");
+  const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryText, setSummaryText] = useState("Loading…");
+  const [speakingId, setSpeakingId] = useState(null);
 
-  const [speakingId, setSpeakingId]   = useState(null);   
+  const navigate = useNavigate();
+  // const API_BASE_URL = "http://localhost:5000";
 
-  const navigate     = useNavigate();
-  /*const API_BASE_URL = "http://localhost:5000";
-*/
-  useEffect(() => { fetchDocs(); }, []);
+  useEffect(() => {
+    fetchDocs();
+  }, []);
+
   const fetchDocs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get('/api/documents/doc', {
+      const { data } = await axios.get("/api/documents/doc", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setDocuments(data);
+      if (Array.isArray(data)) {
+        setDocuments(data);
+      } else {
+        setToastMessage("Invalid document data");
+        setToastOpen(true);
+      }
     } catch (err) {
       console.error("Fetch failed:", err);
+      setToastMessage("Error fetching documents");
+      setToastOpen(true);
     }
   };
 
@@ -62,9 +70,9 @@ export default function DocumentsPage() {
       await axios.delete(`/api/documents/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setToastMessage("Deleted");
+      setToastMessage("Document Deleted");
       setToastOpen(true);
-      fetchDocs();
+      fetchDocs(); // Refresh the list after deletion
     } catch (err) {
       setToastMessage("Delete failed");
       setToastOpen(true);
@@ -79,7 +87,7 @@ export default function DocumentsPage() {
       const { data } = await axios.get(`/api/documents/summary/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSummaryText(data.summary);
+      setSummaryText(data.summary || "Summary generation failed.");
     } catch {
       setSummaryText("Summary failed");
     }
@@ -89,11 +97,12 @@ export default function DocumentsPage() {
     window.speechSynthesis.cancel();
     if (!text) return;
     const u = new SpeechSynthesisUtterance(text);
-    u.onend   = () => setSpeakingId(null);
+    u.onend = () => setSpeakingId(null);
     u.onerror = () => setSpeakingId(null);
     setSpeakingId(id);
     window.speechSynthesis.speak(u);
   };
+
   const stopSpeak = () => {
     window.speechSynthesis.cancel();
     setSpeakingId(null);
@@ -130,13 +139,7 @@ export default function DocumentsPage() {
         <VolumeUp fontSize="inherit" />
       </IconButton>
 
-      <Button
-        size="small"
-        variant="contained"
-        color="error"
-        sx={{ ml: 1 }}
-        onClick={() => handleDelete(doc._id)}
-      >
+      <Button size="small" variant="contained" color="error" sx={{ ml: 1 }} onClick={() => handleDelete(doc._id)}>
         <Delete />
       </Button>
     </>
@@ -191,7 +194,9 @@ export default function DocumentsPage() {
                 <TableRow key={d._id}>
                   <TableCell>{d.title || d.name}</TableCell>
                   <TableCell>{d.date?.slice(0, 10)}</TableCell>
-                  <TableCell><Actions doc={d} /></TableCell>
+                  <TableCell>
+                    <Actions doc={d} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -212,7 +217,7 @@ export default function DocumentsPage() {
               left: "50%",
               transform: "translate(-50%, -50%)",
               width: { xs: 320, sm: 550 },
-              bgcolor: "#fafafa",          
+              bgcolor: "#fafafa",
               border: "1px solid #e0e0e0",
               borderRadius: 2,
               boxShadow: 6,
@@ -248,7 +253,6 @@ export default function DocumentsPage() {
           </Box>
         </Fade>
       </Modal>
-
     </div>
   );
 }
