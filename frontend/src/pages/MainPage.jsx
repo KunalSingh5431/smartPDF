@@ -53,8 +53,6 @@ export default function MainPage() {
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
-  /*const API_BASE_URL = "http://localhost:5000/api/documents";*/
-
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
     if (!loggedInUser) {
@@ -63,12 +61,12 @@ export default function MainPage() {
       setUser(JSON.parse(loggedInUser));
       fetchDocuments();
     }
-  }, []);
+  }, [navigate]);
 
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get('/api/documents/doc', {
+      const response = await axios.get("/api/documents/doc", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,6 +86,7 @@ export default function MainPage() {
 
   const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleProfileMenuClose = () => setAnchorEl(null);
+
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -115,21 +114,17 @@ export default function MainPage() {
       const formData = new FormData();
       formData.append("pdf", selectedFile);
 
-      const uploadResponse = await axios.post(
-        '/api/documents/upload-file',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const uploadResponse = await axios.post("/api/documents/upload-file", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const { url, name } = uploadResponse.data;
 
       const metadata = { name, url };
-      await axios.post('/api/documents/upload', metadata, {
+      await axios.post("/api/documents/upload", metadata, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -148,7 +143,7 @@ export default function MainPage() {
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this PDF?");
     if (!confirmDelete) return;
-  
+
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`/api/documents/delete/${id}`, {
@@ -156,7 +151,7 @@ export default function MainPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       setToastMessage("PDF deleted successfully!");
       setToastOpen(true);
       fetchDocuments();
@@ -167,13 +162,17 @@ export default function MainPage() {
       setToastOpen(true);
     }
   };
-  
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = documents.filter((doc) => doc.name.toLowerCase().includes(query));
     setFilteredDocs(filtered);
+  };
+
+  const handleToastClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setToastOpen(false);
   };
 
   return (
@@ -196,6 +195,7 @@ export default function MainPage() {
             {isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
           </IconButton>
         </Toolbar>
+
         <List>
           <ListItem button onClick={() => navigate("/dashboard")}>
             <ListItemIcon>
@@ -203,18 +203,21 @@ export default function MainPage() {
             </ListItemIcon>
             {isSidebarOpen && <ListItemText primary="Dashboard" />}
           </ListItem>
+
           <ListItem button onClick={handleOpenModal}>
             <ListItemIcon>
               <UploadFile />
             </ListItemIcon>
             {isSidebarOpen && <ListItemText primary="Upload Documents" />}
           </ListItem>
+
           <ListItem button onClick={() => navigate("/documents")}>
             <ListItemIcon>
               <ListIcon />
             </ListItemIcon>
             {isSidebarOpen && <ListItemText primary="My Documents" />}
           </ListItem>
+
           <ListItem button onClick={handleLogout}>
             <ListItemIcon>
               <Logout />
@@ -230,9 +233,11 @@ export default function MainPage() {
             <IconButton color="inherit" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
               <MenuIcon />
             </IconButton>
+
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
               Welcome, {user?.name || "User"}!
             </Typography>
+
             <TextField
               variant="outlined"
               placeholder="Search..."
@@ -242,9 +247,11 @@ export default function MainPage() {
               InputProps={{ startAdornment: <Search sx={{ marginRight: 1 }} /> }}
               sx={{ background: "white", borderRadius: 1, marginRight: 2 }}
             />
+
             <IconButton color="inherit" onClick={handleProfileMenuOpen}>
               <AccountCircle />
             </IconButton>
+
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
               <MenuItem onClick={() => navigate("/profile")}>
                 <ListItemIcon>
@@ -275,10 +282,24 @@ export default function MainPage() {
                 <CardContent>
                   <Typography variant="h6">{doc.name}</Typography>
                   <Typography color="textSecondary">Uploaded: {doc.date?.slice(0, 10)}</Typography>
-                  <Button size="small" variant="contained" sx={{ mt: 1, mr: 1 }} onClick={() => window.open(doc.url, "_blank")}>
+
+                  <Button
+                    size="small"
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={() => window.open(doc.url, "_blank")}
+                  >
                     View
                   </Button>
-                  <Button size="small" variant="contained" color="error" sx={{ mt: 1 }} startIcon={<Delete />} onClick={() => handleDelete(doc._id)}>
+
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="error"
+                    sx={{ mt: 1 }}
+                    startIcon={<Delete />}
+                    onClick={() => handleDelete(doc._id)}
+                  >
                     Delete
                   </Button>
                 </CardContent>
@@ -290,22 +311,46 @@ export default function MainPage() {
 
       <Modal open={openModal} onClose={handleCloseModal}>
         <Fade in={openModal}>
-          <Box sx={{ width: 400, p: 3, bgcolor: "white", borderRadius: 2, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-            <Typography variant="h6">Upload a PDF</Typography>
-            <Button variant="contained" component="label" startIcon={<CloudUpload />} sx={{ mt: 2 }}>
+          <Box
+            sx={{
+              width: 400,
+              p: 3,
+              bgcolor: "white",
+              borderRadius: 2,
+              textAlign: "center",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Typography variant="h6" mb={2}>Upload a PDF</Typography>
+
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUpload />}
+              sx={{ mb: 2 }}
+            >
               Select PDF
               <input type="file" hidden accept="application/pdf" onChange={handleFileChange} />
             </Button>
-            {selectedFile && <Typography sx={{ mt: 1 }}>Selected: {selectedFile.name}</Typography>}
-            <Button onClick={handleUpload} variant="contained" sx={{ mt: 2, ml: 3 }}>
+
+            {selectedFile && <Typography variant="body2" mb={2}>Selected: {selectedFile.name}</Typography>}
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpload}
+            >
               Upload
             </Button>
           </Box>
         </Fade>
       </Modal>
 
-      <Snackbar open={toastOpen} autoHideDuration={3000} onClose={() => setToastOpen(false)}>
-        <Alert severity={toastMessage.toLowerCase().includes("fail") ? "error" : "success"}>
+      <Snackbar open={toastOpen} autoHideDuration={3000} onClose={handleToastClose}>
+        <Alert severity={toastMessage.toLowerCase().includes("fail") ? "error" : "success"} onClose={handleToastClose}>
           {toastMessage}
         </Alert>
       </Snackbar>
