@@ -68,7 +68,7 @@ export default function MainPage() {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`/api/documents/doc`, {
+      const response = await axios.get('/api/documents/doc', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,7 +116,7 @@ export default function MainPage() {
       formData.append("pdf", selectedFile);
 
       const uploadResponse = await axios.post(
-        `/api/documents/upload-file`,
+        '/api/documents/upload-file',
         formData,
         {
           headers: {
@@ -129,7 +129,7 @@ export default function MainPage() {
       const { url, name } = uploadResponse.data;
 
       const metadata = { name, url };
-      await axios.post(`/api/documents/upload`, metadata, {
+      await axios.post('/api/documents/upload', metadata, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

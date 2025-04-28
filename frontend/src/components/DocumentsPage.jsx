@@ -46,7 +46,7 @@ export default function DocumentsPage() {
   const fetchDocs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get(`/api/documents/doc`, {
+      const { data } = await axios.get('/api/documents/doc', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocuments(data);
