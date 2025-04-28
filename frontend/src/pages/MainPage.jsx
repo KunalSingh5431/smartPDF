@@ -11,6 +11,8 @@ import {
   ListItemText,
   Button,
   Grid,
+  Card,
+  CardContent,
   Menu,
   MenuItem,
   Modal,
@@ -51,6 +53,7 @@ export default function MainPage() {
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
+
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
     if (!loggedInUser) {
@@ -70,7 +73,7 @@ export default function MainPage() {
         },
       });
       setDocuments(response.data);
-      setFilteredDocs(response.data);  // Set filteredDocs when documents are fetched
+      setFilteredDocs(response.data);
     } catch (error) {
       console.error("Error fetching documents:", error);
     }
@@ -144,7 +147,7 @@ export default function MainPage() {
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this PDF?");
     if (!confirmDelete) return;
-
+  
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`/api/documents/delete/${id}`, {
@@ -152,7 +155,7 @@ export default function MainPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       setToastMessage("PDF deleted successfully!");
       setToastOpen(true);
       fetchDocuments();
@@ -163,12 +166,13 @@ export default function MainPage() {
       setToastOpen(true);
     }
   };
+  
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = documents.filter((doc) => doc.name.toLowerCase().includes(query));
-    setFilteredDocs(filtered);  // Update the filteredDocs based on the search query
+    setFilteredDocs(filtered);
   };
 
   return (
@@ -263,32 +267,23 @@ export default function MainPage() {
           </Toolbar>
         </AppBar>
 
-        {/* Document List Section */}
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
-          {filteredDocs.length === 0 ? (
-            <Typography variant="h6" align="center" sx={{ mt: 4 }}>
-              No documents found.
-            </Typography>
-          ) : (
-            filteredDocs.map((doc) => (
-              <Grid item xs={12} sm={6} md={4} key={doc._id}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6">{doc.name}</Typography>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      startIcon={<Delete />}
-                      sx={{ mt: 2 }}
-                      onClick={() => handleDelete(doc._id)}
-                    >
-                      Delete
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
-          )}
+          {Array.isArray(filteredDocs) && filteredDocs.map((doc) => (
+            <Grid item xs={12} sm={6} md={4} key={doc._id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{doc.name}</Typography>
+                  <Typography color="textSecondary">Uploaded: {doc.date?.slice(0, 10)}</Typography>
+                  <Button size="small" variant="contained" sx={{ mt: 1, mr: 1 }} onClick={() => window.open(doc.url, "_blank")}>
+                    View
+                  </Button>
+                  <Button size="small" variant="contained" color="error" sx={{ mt: 1 }} startIcon={<Delete />} onClick={() => handleDelete(doc._id)}>
+                    Delete
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </main>
 
