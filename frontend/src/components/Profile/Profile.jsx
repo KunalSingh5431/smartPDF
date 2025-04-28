@@ -29,8 +29,6 @@ export default function Profile() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastSeverity, setToastSeverity] = useState("success");
 
-  /*const API_BASE_URL =  "http://localhost:5000";*/
-
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
@@ -66,9 +64,10 @@ export default function Profile() {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      setUser(data);
-      setName(data.name);
-      setEmail(data.email);
+      console.log("User Data Fetched: ", data); // Log the data
+      setUser(data);  // Store user data in state
+      setName(data?.name || "");  // Set name and email
+      setEmail(data?.email || "");
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -76,9 +75,8 @@ export default function Profile() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submit clicked");
 
-    if (!user || !user._id) return console.log("ok");
+    if (!user || !user._id) return;
 
     if (newPassword && newPassword !== confirmNewPassword) {
       setToastMessage("New passwords do not match.");
@@ -88,7 +86,6 @@ export default function Profile() {
     }
 
     const token = localStorage.getItem("token");
-    console.log(token);
 
     const updatedData = {
       name,
@@ -109,7 +106,6 @@ export default function Profile() {
         },
         body: JSON.stringify(updatedData),
       });
-      console.log("Response status:", response.status);
 
       if (response.ok) {
         const { user: updatedUser } = await response.json();
@@ -119,9 +115,7 @@ export default function Profile() {
         setToastMessage("Profile updated successfully!");
         setToastSeverity("success");
         setToastOpen(true);
-      }
-      
-       else {
+      } else {
         const errorText = await response.text();
         setToastMessage(`Failed to update profile: ${errorText}`);
         setToastSeverity("error");
@@ -160,8 +154,8 @@ export default function Profile() {
         <Card style={{ maxWidth: 500, width: "100%", padding: "20px" }}>
           <CardHeader
             avatar={<Avatar>{name ? name.charAt(0).toUpperCase() : "U"}</Avatar>}
-            title={<Typography variant="h5">{name}</Typography>}
-            subheader={email}
+            title={<Typography variant="h5">{name || "Loading..."}</Typography>}
+            subheader={email || "Loading..."}
             action={
               !isEditing && (
                 <IconButton onClick={() => setIsEditing(true)}>
@@ -240,7 +234,7 @@ export default function Profile() {
                     <Button
                       variant="contained"
                       color="primary"
-                      type="submit" 
+                      type="submit"
                       startIcon={<Save />}
                     >
                       Save Changes
