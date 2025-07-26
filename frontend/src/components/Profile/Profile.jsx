@@ -54,7 +54,7 @@ export default function Profile() {
 
   const fetchUserData = async (userId, token) => {
     try {
-      const response = await fetch(`/api/users/users/${userId}`, {
+      const response = await fetch(`/api/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export default function Profile() {
     }
 
     try {
-      const response = await fetch(`/api/users/users/${user._id}`, {
+      const response = await fetch(`/api/users/user-update/${user._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
