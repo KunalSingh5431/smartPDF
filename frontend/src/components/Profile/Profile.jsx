@@ -54,7 +54,7 @@ export default function Profile() {
 
   const fetchUserData = async (userId, token) => {
     try {
-      const response = await fetch(`/api/users/${userId}`, {
+      const response = await fetch(`/api/users/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
