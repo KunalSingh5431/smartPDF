@@ -98,11 +98,11 @@ export default function Profile() {
     }
 
     try {
-      const response = await fetch('/api/users/users/${user._id}', {
+      const response = await fetch(`/api/users/users/${user._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updatedData),
       });
