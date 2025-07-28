@@ -4,12 +4,12 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const Document = require("../models/Document");
-
 const pdfParse = require("pdf-parse");
 const { summariseText } = require("../utils/gemini");
 
 const router = express.Router();
 
+// ✅ Auth Middleware
 const protect = (req, res, next) => {
   const authHeader = req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -25,6 +25,7 @@ const protect = (req, res, next) => {
   }
 };
 
+// ✅ Multer Setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, "..", "uploads");
@@ -49,7 +50,7 @@ const upload = multer({
   },
 });
 
-// ✅ File Upload Route
+// ✅ Upload File Endpoint (returns file URL)
 router.post("/upload-file", protect, upload.single("pdf"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
@@ -59,10 +60,10 @@ router.post("/upload-file", protect, upload.single("pdf"), (req, res) => {
   res.status(200).json({ url: fileUrl, name: req.file.originalname });
 });
 
-// ✅ Serve uploaded files
+// ✅ Serve uploaded files statically
 router.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
-// ✅ Document metadata saving
+// ✅ Upload Document Metadata
 router.post("/upload", protect, async (req, res) => {
   try {
     const { name, url } = req.body;
@@ -84,17 +85,17 @@ router.post("/upload", protect, async (req, res) => {
   }
 });
 
-// ✅ Get user documents
+// ✅ Get All User Documents (with summary)
 router.get("/doc", protect, async (req, res) => {
   try {
-    const documents = await Document.find({ userId: req.user.id });
+    const documents = await Document.find({ userId: req.user.id }).select("name url date summary");
     res.json(documents);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
 
-// ✅ DELETE document by ID
+// ✅ Delete Document
 router.delete("/delete/:id", protect, async (req, res) => {
   try {
     const doc = await Document.findById(req.params.id);
@@ -104,21 +105,20 @@ router.delete("/delete/:id", protect, async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    // Delete file from disk
+    // Delete file from server
     const filePath = path.join(__dirname, "..", "uploads", path.basename(doc.url));
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
 
-    // 🔁 Replaced .remove() with findByIdAndDelete
     await Document.findByIdAndDelete(req.params.id);
-
     res.json({ message: "Document deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Delete failed", error: error.message });
   }
 });
 
+// ✅ Generate or Return Summary
 router.get("/summary/:id", protect, async (req, res) => {
   try {
     console.log("▶ summary route → id:", req.params.id);
@@ -128,25 +128,24 @@ router.get("/summary/:id", protect, async (req, res) => {
       console.log("❌ doc not found");
       return res.status(404).json({ message: "Document not found" });
     }
-    console.log("✅ doc fetched:", doc.name);
 
-    const pdfPath = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      path.basename(doc.url)
-    );
-    console.log("➡ trying to read:", pdfPath);
+    // ✅ Return cached summary if exists
+    if (doc.summary && doc.summary.length > 10) {
+      console.log("✅ Returning cached summary");
+      return res.json({ summary: doc.summary });
+    }
 
+    // ✅ Generate and store new summary
+    const pdfPath = path.join(__dirname, "..", "uploads", path.basename(doc.url));
     const dataBuffer = fs.readFileSync(pdfPath);
-    console.log("✅ pdf read, bytes:", dataBuffer.length);
-
     const pdfData = await pdfParse(dataBuffer);
-    console.log("✅ text length:", pdfData.text.length);
 
     const summary = await summariseText(pdfData.text);
-    console.log("✅ got summary, length:", summary.length);
 
+    doc.summary = summary;
+    await doc.save();
+
+    console.log("✅ New summary generated and saved");
     res.json({ summary });
   } catch (err) {
     console.log("❌ summary route failed:", err);

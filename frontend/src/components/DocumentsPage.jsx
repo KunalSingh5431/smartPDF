@@ -128,7 +128,7 @@ export default function DocumentsPage() {
             return;
           }
 
-          const textToSpeak = doc.summary?.trim(); // use existing summary
+          const textToSpeak = doc.summary?.trim();
 
           if (textToSpeak && textToSpeak.length > 0) {
             speak(textToSpeak, doc._id);
