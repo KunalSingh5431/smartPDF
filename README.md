@@ -39,7 +39,7 @@ SmartPDF is a MERN stack application that allows users to upload PDF files, gene
 
 ## 📸 Demo
 
-> ![SmartPDF Preview](./public/Screenshot 2025-07-29 001544.png)
+> ![SmartPDF Preview](<img width="1919" height="878" alt="Image" src="https://github.com/user-attachments/assets/fd21cef7-e7b0-4d0d-9bff-ee2bfe0bd812" />)
 
 ---
 
