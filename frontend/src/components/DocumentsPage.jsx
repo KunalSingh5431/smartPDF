@@ -87,7 +87,15 @@ export default function DocumentsPage() {
       const { data } = await axios.get(`/api/documents/summary/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+  
       setSummaryText(data.summary || "Summary generation failed.");
+  
+      // ✅ Update summary in documents state so speak() works
+      setDocuments((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc._id === id ? { ...doc, summary: data.summary } : doc
+        )
+      );
     } catch {
       setSummaryText("Summary failed");
     }
