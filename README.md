@@ -39,7 +39,7 @@ SmartPDF is a MERN stack application that allows users to upload PDF files, gene
 
 ## 📸 Demo
 
-> ![SmartPDF Preview](./frontend/public/Screenshot 2025-07-29 001544.png)
+> ![SmartPDF Preview](./public/Screenshot 2025-07-29 001544.png)
 
 ---
 
@@ -108,17 +108,17 @@ npm start
 
 ## 🙌 Acknowledgements
 
-Gemini API for AI summarization
-pdf-parse
-MUI for UI components
+- Gemini API for AI summarization
+- pdf-parse
+- MUI for UI components
 
 ---
 
 ## 📬 Contact
 
-Kunal Singh
-📧 kunalsingh5431@gmail.com
-🐙 GitHub: KunalSingh5431
+- Kunal Singh
+- 📧 kunalsingh5431@gmail.com
+- 🐙 GitHub: KunalSingh5431
 
 
 
