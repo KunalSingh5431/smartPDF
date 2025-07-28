@@ -122,22 +122,25 @@ export default function DocumentsPage() {
         size="small"
         color={speakingId === doc._id ? "primary" : "default"}
         sx={{ ml: 0.9 }}
-        onClick={async () => {
-          if (speakingId === doc._id) { stopSpeak(); return; }
-          try {
-            const token = localStorage.getItem("token");
-            const { data } = await axios.get(`/summary/${doc._id}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            speak(data.summary || doc.name, doc._id);
-          } catch {
-            setToastMessage("Audio failed");
+        onClick={() => {
+          if (speakingId === doc._id) {
+            stopSpeak();
+            return;
+          }
+
+          const textToSpeak = doc.summary?.trim(); // use existing summary
+
+          if (textToSpeak && textToSpeak.length > 0) {
+            speak(textToSpeak, doc._id);
+          } else {
+            setToastMessage("Summary not available");
             setToastOpen(true);
           }
         }}
       >
         <VolumeUp fontSize="inherit" />
       </IconButton>
+
 
       <Button size="small" variant="contained" color="error" sx={{ ml: 1 }} onClick={() => handleDelete(doc._id)}>
         <Delete />
