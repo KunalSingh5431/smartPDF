@@ -1,70 +1,124 @@
-# Getting Started with Create React App
+# 📄 SmartPDF - Summarize and Listen to Your PDFs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+SmartPDF is a MERN stack application that allows users to upload PDF files, generate AI-based summaries, and listen to them using text-to-speech. Built with intuitive UI, JWT authentication, and powerful backend processing using Gemini AI, this tool is perfect for quick understanding of lengthy documents.
 
-## Available Scripts
+🔗 **Live Demo:** [https://your-deployed-link.com](https://smartpdf-bybv.onrender.com)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- 📤 Upload PDF documents securely
+- 🤖 Generate intelligent summaries using Gemini API
+- 🔊 Text-to-speech playback of summaries
+- 🧾 Summary caching for performance
+- 🧑‍💻 JWT-based authentication
+- 📂 Document listing and deletion
+- 🖼 Modern responsive UI with Material-UI (MUI)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠 Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Frontend:**
+- React.js
+- Axios
+- React Router
+- Material UI (MUI)
+- SpeechSynthesis API
 
-### `npm run build`
+**Backend:**
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- Multer for file uploads
+- pdf-parse for text extraction
+- Gemini AI API for text summarization
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📸 Demo
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> ![SmartPDF Preview](./frontend/public/Screenshot 2025-07-29 001544.png)
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🔐 Authentication
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Secure login and signup with JWT tokens.
+- Protected routes and actions using middleware.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🧠 AI Summary
 
-## Learn More
+- Text is extracted from PDFs using `pdf-parse`.
+- Summaries are generated using Gemini's large language model API.
+- Summaries are stored in MongoDB and reused on future requests.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🔊 Text-to-Speech
 
-### Code Splitting
+- Summaries can be read aloud using the browser’s `SpeechSynthesisUtterance` API.
+- One-click interaction for enhanced accessibility.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 📁 Folder Structure (Client + Server)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+/client → React Frontend
+/server → Express Backend
+/uploads → PDF Storage
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## ⚙️ Setup Instructions
 
-### Advanced Configuration
+1. **Clone the repo**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+git clone https://github.com/KunalSingh5431/SmartPDF.git
+cd SmartPDF
+```
 
-### Deployment
+2. **Backend Setup**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+cd server
+npm install
+```
 
-### `npm run build` fails to minify
+3. **Create a .env file and add:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+JWT_SECRET=your_secret_key
+PORT=5000
+```
+
+4. **Frontend Setup**
+
+```bash
+cd ../client
+npm install
+npm start
+```
+
+---
+
+## 🙌 Acknowledgements
+
+Gemini API for AI summarization
+pdf-parse
+MUI for UI components
+
+---
+
+## 📬 Contact
+
+Kunal Singh
+📧 kunalsingh5431@gmail.com
+🐙 GitHub: KunalSingh5431
+
+
+
